@@ -1,8 +1,8 @@
 'use strict';
 
 let CONTAINER_ID = 'container';
-let CONTAINER_WIDTH = 1200;
-let CONTAINER_HEIGHT = 800;
+// let CONTAINER_WIDTH = 300;
+// let CONTAINER_HEIGHT = 200;
 
 let nodeData = [
     {
@@ -31,8 +31,10 @@ let edgeData = [
 let c10 = (i) => { return d3.schemeCategory10[i % 10]; };
 let svg = d3.select('body')
     .append('svg')
-    .attr('width', CONTAINER_WIDTH)
-    .attr('height', CONTAINER_HEIGHT);
+    .attr('viewBox', '0 0 600 300')
+    .attr('preserveAspectRatio', 'xMidYMid meet');
+    // .attr('width', CONTAINER_WIDTH)
+    // .attr('height', CONTAINER_HEIGHT);
 
 let links = svg.selectAll('link')
     .data(edgeData)

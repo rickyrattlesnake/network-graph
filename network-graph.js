@@ -9,6 +9,7 @@ let NODE_WIDTH = 25;
 
 let nodeData = data.nodes;
 let edgeData = data.edges;
+let jumpData = data.jumps;
 
 
 // Vertically centre the nodes
@@ -45,6 +46,29 @@ for (let i = 0; i < edgeData.length; i++){
     // Halfway down left edge
     edge.x2 = dest.x;
     edge.y2 = dest.y + NODE_HEIGHT / 2;
+}
+
+for (let i = 0; i < jumpData.length; i++){
+    let jump = jumpData[i];
+    let source = nodeData.filter((node) => {
+        return node.id === jump.source;
+    })[0];
+    let dest = nodeData.filter((node) => {
+        return node.id === jump.dest;
+    })[0];
+
+    // middle of top edge
+    jump.points = [];
+    jump.points.push({
+        x: source.x + NODE_WIDTH / 2,
+        y: source.y,
+    }, {
+        x: source.x + (dest.x - source.x) / 2 ,
+        y: source.y - 100,
+    }, {
+        x: dest.x + NODE_WIDTH / 2,
+        y: dest.y,
+    });
 }
 
 
@@ -86,4 +110,12 @@ var edgelabels = svg.selectAll("text")
     .attr('y', 160);
 
 
+let lineGen = d3.line()
+    .curve(d3.curveNatural)
+    .x(function(d) { return d.x; })
+    .y(function(d) { return d.y; });
+
+let linePath = svg.append('path')
+    .attr('class', 'jump')
+    .attr('d', lineGen(jumpData[0].points));
 

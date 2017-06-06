@@ -50,5 +50,15 @@ let data = {
                 latency: '1000',
             }
         },
+    ],
+    jumps: [
+        {
+            id: 'j1',
+            source: 'n1',
+            dest: 'n3',
+            payload: {
+                latency: '1000',
+            }
+        },
     ]
 };

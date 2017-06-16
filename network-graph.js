@@ -11,6 +11,18 @@ let nodeData = data.nodes;
 let edgeData = data.edges;
 let jumpData = data.jumps;
 
+function redraw(containerHeight, containerWidth){
+
+}
+
+// breakpoints = {
+//     x-small: () =>{},
+//     small: () => {},
+//     medium: () => {},
+//     large: () => {},
+// };
+
+
 
 // Vertically centre the nodes
 let nodeYPos = 1/2 * (VIEWBOX_HEIGHT - NODE_HEIGHT);
@@ -119,3 +131,18 @@ let linePath = svg.append('path')
     .attr('class', 'jump')
     .attr('d', lineGen(jumpData[0].points));
 
+
+svg.on('SVGResize', (evt) => {
+    console.log('svg.SVGResize Event Fired :: ');
+    console.dir(evt);
+});
+
+svg.on('resize',(evt) => {
+    console.log('svg.resize Event Fired :: ');
+    console.dir(evt);
+});
+
+window.addEventListener('resize', debounce((evt) => {
+    console.log('windows.resize Event Fired :: ');
+    console.dir(svg.node().getBoundingRectangle());
+}, 250));

@@ -1,4 +1,5 @@
-/* REMEMBER ----
+/*
+    REMEMBER ----
     CO-ORDINATE SYSTEM is 0,0 at top left and increasing x to right, increasing y down
 */
 
@@ -7,6 +8,10 @@ class Node {
         this.dimensions = dimensions;
         this.centre = centre;
         this.data = data;
+    }
+
+    getUseRef() {
+        return '#router';
     }
 
     getOriginCoordinate() {
@@ -79,10 +84,6 @@ class Edge {
 
     getDestinationCoordinate() {
         let { xDirection, yDirection } = this.getEdgeDirection();
-
-        console.log(xDirection);
-        console.log(yDirection);
-
         if (xDirection === POSITION.LEFT) {
             return this.destination.getPositionCoordinate(POSITION.RIGHT, POSITION.MIDDLE);
         } else if (xDirection === POSITION.RIGHT) {
@@ -121,20 +122,20 @@ class Coordinate {
 
     /* from this coordinate to other coordinate */
     getDirection(other) {
-        let diffs = this.getDifference(other);
+        let { xDiff, yDiff } = this.getDifference(other);
         let xDir;
         let yDir;
-        if (diffs.x > 0) {
+        if (xDiff > 0) {
             xDir = POSITION.RIGHT;
-        } else if (diffs.x < 0) {
+        } else if (xDiff < 0) {
             xDir = POSITION.LEFT;
         } else {
             xDir = POSITION.MIDDLE;
         }
 
-        if (diffs.y > 0) {
+        if (yDiff > 0) {
             yDir = POSITION.BOTTOM;
-        } else if (diffs.y < 0) {
+        } else if (yDiff < 0) {
             yDir = POSITION.TOP;
         } else {
             yDir = POSITION.MIDDLE;
@@ -156,10 +157,109 @@ POSITION = {
 }
 
 class Graph {
-    constructor(nodes, edges) {
-        this.nodes = nodes;
-        this.edges = edges;
+    constructor(nodeData, edgeData) {
+        this._nodeData = nodeData;
+        this._edgeData = edgeData;
+
+        this.nodes = [];
+        this.edges = [];
+        this._containerDimensions = new Dimensions(0,0);
+
+        this._NODE_HEIGHT = 25;
+        this._NODE_WIDTH = 25;
+    }
+
+    setContainerHeight(val) {
+        this._containerDimensions.height = val;
+    }
+
+    setContainerWidth(val) {
+        this._containerDimensions.width = val;
+    }
+
+    getContainerHeight() {
+        return this._containerDimensions.height;
+    }
+
+    getContainerWidth() {
+        return this._containerDimensions.width;
+    }
+
+    createNodes(yPosition, xSpacing) {
+        for (let i = 0; i < this._nodeData.length; i++) {
+            let centreCoord = new Coordinate(0, 0);
+            let dimensions = new Dimensions(0, 0);
+            let data = this._nodeData[i];
+
+            centreCoord.y = yPosition;
+
+            if (i === 0) {
+                nodeXPos[i] = spacing;
+            } else {
+                nodeXPos[i] = spacing + i * (spacing + NODE_WIDTH);
+            }
+
+            this.nodes.push(new Node(dimensions, centreCoord, data));
+
+            //Integrate positions with data
+            nodeData[i].x = nodeXPos[i];
+            nodeData[i].y = nodeYPos;
+        }
+    }
+
+    createEdges() {
+
+    }
+
+    calculateLayout() {
+        // Reposition the nodes
+        let centreY = 1 / 2 * this.getContainerHeight();
+
+        // Horizontally distribute nodes with equal spacing
+        let numNodes = this._nodeData.length;
+        let xSpacing = this.getContainerWidth() / (numNodes + 1);
+    }
+
+    renderNodes() {
+        let nodes = svg.selectAll('node')
+            .data(this.nodes)
+            .enter()
+            .append("use")
+            .attr({
+                'xlink:href': '#router',
+                class: 'node',
+                x: (node) => return node.x,
+                y: (node) => return node.y,
+                height: (node) => node.getHeight(),
+                width: (node) => node.getWidth(),
+                fill: 'green',
+            });
+    }
+
+    renderEdges() {
+        let links = svg.selectAll('edge')
+            .data(this.edges)
+            .enter()
+            .append('line')
+            .attr({
+                class: 'edge',
+                x1: (edge) => return edge.getOriginCoordinate().x,
+                y1: (edge) => return edge.getOriginCoordinate().y,
+                x2: (edge) => return edge.getDestinationCoordinate().x,
+                y2: (edge) => return edge.getDestinationCoordinate().y,
+            });
+
     }
 }
+
+
+
+let n1 = new Node(new Dimensions(10, 10), new Coordinate(10, 10), {});
+let n2 = new Node(new Dimensions(5, 5), new Coordinate(20, 20), {});
+let e1 = new Edge(n1, n2);
+let e2 = new Edge(n2, n1);
+
+console.dir(e2.getOriginCoordinate());
+console.dir(e2.getDestinationCoordinate());
 
 
